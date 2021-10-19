@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise XHR</title>
+</head>
+<body>
+    <h1>XHR by promising</h1>
+
+    <ul>
+
+    </ul>
+
+
+
+
+
+    <script>
+        const sendRequest = async (method, url, data) => {
+            const promise1 = await  new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open(method, url);
+                xhr.onload = () => {
+                    const data = xhr.response;
+                    const parseData = JSON.parse(data);
+                    return resolve(parseData)
+                }
+                xhr.onerror = () =>{
+                    const message = "Something Went Wrong";
+                    reject(console.log(new Error(message)))
+                }
+                xhr.setRequestHeader("Content-Type", "application/json")
+                xhr.send(JSON.stringify(data))
+            })
+            return promise1;
+        }
+
+        
+        const postData = sendRequest("POST", "https://jsonplaceholder.typicode.com/posts/", {
+            title: 'foo',
+            body: 'bar',
+            userId: 1,
+        })
+
+        const getData = sendRequest("GET", "https://jsonplaceholder.typicode.com/posts/");
+        getData.then(res => {
+            res.forEach(data => {
+                showData(data.title)
+            })
+        })
+        .catch(err => {
+                alert(`Sorry Something Went Wrong ${res.status}`)
+            })
+
+        const showData = (data) => {
+            const ul = document.querySelector("ul");
+            const newLi = document.createElement("li");
+            newLi.innerText = data;
+            ul.appendChild(newLi);
+        }
+        
+    </script>
+</body>
+</html>
